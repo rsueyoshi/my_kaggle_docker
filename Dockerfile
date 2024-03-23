@@ -14,3 +14,12 @@ RUN pip install -r requirements.txt
 ADD run.sh /opt/run.sh
 RUN chmod 700 /opt/run.sh
 CMD /opt/run.sh
+
+# Kaggle CLI
+RUN mv kaggle.json ~/.kaggle
+RUN chmod 600 /root/.kaggle/kaggle.json
+
+# AWS CLI
+RUN sudo ./aws/install
+RUN rm -r aws
+RUN mv .aws ~

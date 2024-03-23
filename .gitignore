@@ -22,3 +22,7 @@ notebook/nohup.out
 notebook/lightning_logs
 wandb/*
 lightning_logs/*
+input/*
+.aws/*
+kaggle.json
+.env
