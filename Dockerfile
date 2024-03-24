@@ -23,3 +23,7 @@ RUN chmod 600 /root/.kaggle/kaggle.json
 RUN sudo ./aws/install
 RUN rm -r aws
 RUN mv .aws ~
+
+# byobu
+RUN sudo apt-get update
+RUN sudo apt-get install byobu
