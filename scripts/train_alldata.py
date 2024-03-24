@@ -14,41 +14,43 @@ from types import SimpleNamespace
 from typing import Optional, Tuple, Union
 import yaml
 
-import torch
-from torch import nn
 from transformers import (
     AutoTokenizer, 
     Trainer, 
     TrainingArguments,
     AutoModelForTokenClassification, 
     DataCollatorForTokenClassification, 
-    DebertaV2ForTokenClassification
 )
-from transformers.utils import(
-    add_code_sample_docstrings,
-    add_start_docstrings,
-    add_start_docstrings_to_model_forward,
-)
-from transformers.modeling_outputs import TokenClassifierOutput, TokenClassifierOutput
 import evaluate
 from datasets import Dataset, features
 import numpy as np
 
 import wandb
 from seqeval.metrics import recall_score, precision_score
-from seqeval.metrics import classification_report
-from seqeval.metrics import f1_score
+
+def init_logger(log_file='train.log'):
+    from logging import getLogger, INFO, FileHandler, Formatter, StreamHandler
+    logger = getLogger(__name__)
+    logger.setLevel(INFO)
+    handler1 = StreamHandler()
+    handler1.setFormatter(Formatter("%(message)s"))
+    handler2 = FileHandler(filename=log_file)
+    handler2.setFormatter(Formatter("%(message)s"))
+    logger.addHandler(handler1)
+    logger.addHandler(handler2)
+    return logger
+
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
 parser_args, _ = parser.parse_known_args(sys.argv)
 cfg = yaml.safe_load(open(parser_args.config).read())
 
-cfg = yaml.safe_load(open(parser_args.config).read())
 for k, v in cfg.items():
     if type(v) == dict:
         cfg[k] = SimpleNamespace(**v)
 cfg = SimpleNamespace(**cfg)
+
 print(cfg)
 
 

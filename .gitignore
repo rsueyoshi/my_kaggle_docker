@@ -25,5 +25,6 @@ lightning_logs/*
 input/*
 .aws/*
 notebook/wandb/*
+scripts/wandb
 kaggle.json
 .env
