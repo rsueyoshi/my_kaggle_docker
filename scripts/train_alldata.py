@@ -271,7 +271,8 @@ else:
 
 args = TrainingArguments(
     output_dir=OUTPUT_DIR, 
-    bf16=True,
+    bf16=cfg.training.bf16,
+    fp16=cfg.training.fp16,
     learning_rate=LR,
     num_train_epochs=EPOCHS,
     per_device_train_batch_size=BATCH_SIZE,

@@ -24,6 +24,8 @@ training:
     evaluation_strategy: "no"
     warmup_ratio: 0.1
     weight_decay: 0.01
+    bf16: true
+    fp16: False
 output:
     dir: /kaggle/output/deberta3large
 debug: False

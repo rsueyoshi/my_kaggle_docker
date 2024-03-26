@@ -1,0 +1,31 @@
+dataset: 
+    json_filepath: /kaggle/input/pii-detection-removal-from-educational-data/train.json
+    extra_filepath:
+    - /kaggle/input/fix-punctuation-tokenization-external-dataset/pii_dataset_fixed.json
+    - /kaggle/input/fix-punctuation-tokenization-external-dataset/moredata_dataset_fixed.json
+model_class: DebertaV2ForTokenClassification
+architecture:
+    backbone: microsoft/deberta-v3-large
+    name: ec2_deberta_large_fp16_0966_return_overflowing_tokens
+environment:
+    mixed_precision: true
+    number_of_workers: 4
+    seed: 42
+experiment_name: efficiency_model
+tokenizer:
+    max_length: 1800
+    stride: 128
+training:
+    batch_size: 1
+    epochs: 3
+    grad_accumulation: 16
+    learning_rate: 2.5e-5
+    schedule: linear
+    evaluation_strategy: "no"
+    warmup_ratio: 0.1
+    weight_decay: 0.01
+    bf16: False
+    fp16: true
+output:
+    dir: /kaggle/output/deberta3large
+debug: False
