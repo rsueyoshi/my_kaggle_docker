@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv("/kaggle/.env")
+load_dotenv("../.env")
 WANDB_API_KEY = os.getenv("WANDB_API_KEY")
 
 
@@ -17,11 +17,11 @@ import yaml
 
 from transformers import (
     AutoTokenizer, 
-    Trainer, 
-    TrainingArguments,
     AutoModelForTokenClassification, 
     DataCollatorForTokenClassification, 
 )
+from optimum.neuron import NeuronTrainer as Trainer
+from optimum.neuron import NeuronTrainingArguments as TrainingArguments
 import evaluate
 from datasets import Dataset, features
 import numpy as np
