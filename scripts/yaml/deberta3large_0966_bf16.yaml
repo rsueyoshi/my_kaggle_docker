@@ -6,14 +6,13 @@ dataset:
 model_class: DebertaV2ForTokenClassification
 architecture:
     backbone: microsoft/deberta-v3-large
-    name: ec2_deberta_large_0966_return_overflowing_tokens
+    name: ec2_deberta_large_bf16_0966_return_overflowing_tokens_fix
 environment:
     mixed_precision: true
-    number_of_workers: 4
     seed: 42
 experiment_name: efficiency_model
 tokenizer:
-    max_length: 1792
+    max_length: 1820
     stride: 128
 training:
     batch_size: 1

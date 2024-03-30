@@ -22,7 +22,7 @@ from transformers import (
     AutoModelForTokenClassification, 
     DataCollatorForTokenClassification, 
 )
-from datasets import Dataset,
+from datasets import Dataset
 import numpy as np
 import torch
 
@@ -74,7 +74,7 @@ def seed_everything(seed: int):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-set_seed(cfg.environment.seed)
+seed_everything(cfg.environment.seed)
 
 name = cfg.architecture.name
 
