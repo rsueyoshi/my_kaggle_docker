@@ -22,9 +22,9 @@ from transformers import (
     AutoModelForTokenClassification, 
     DataCollatorForTokenClassification, 
 )
-import evaluate
-from datasets import Dataset, features
+from datasets import Dataset,
 import numpy as np
+import torch
 
 import wandb
 from seqeval.metrics import recall_score, precision_score
@@ -67,7 +67,7 @@ LR = cfg.training.learning_rate
 
 def seed_everything(seed: int):
     random.seed(seed)
-    os.environ[“PYTHONHASHSEED”] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
@@ -101,7 +101,7 @@ data = p + n[:len(n)//3]
 print("filtered datapoints: ", len(data))
 
 for i, ex_filepath in enumerate(cfg.dataset.extra_filepath):
-    ex_data = json.load(open("/kaggle/input/fix-punctuation-tokenization-external-dataset/pii_dataset_fixed.json"))
+    ex_data = json.load(open(ex_filepath))
     print(f"external datapoints {i}: {len(ex_data)}")
     data = data + ex_data
 
@@ -111,12 +111,6 @@ all_labels = sorted(list(set(chain(*[x["labels"] for x in data]))))
 label2id = {l: i for i,l in enumerate(all_labels)}
 id2label = {v:k for k,v in label2id.items()}
 
-target = [
-    'B-EMAIL', 'B-ID_NUM', 'B-NAME_STUDENT', 'B-PHONE_NUM', 
-    'B-STREET_ADDRESS', 'B-URL_PERSONAL', 'B-USERNAME', 'I-ID_NUM', 
-    'I-NAME_STUDENT', 'I-PHONE_NUM', 'I-STREET_ADDRESS', 'I-URL_PERSONAL'
-]
-
 print(id2label)
 
 
@@ -125,12 +119,10 @@ def tokenize_train(example, tokenizer, label2id):
     # rebuild text from tokens
     text = []
     labels = []
-    
-    idx = 0
 
-    for t, l, ws in zip(
+    for idx, (t, l, ws) in enumerate(zip(
         example["tokens"], example["provided_labels"], example["trailing_whitespace"]
-    ):
+    )):
         text.append(t)
         labels.extend([l] * len(t))
 
@@ -156,9 +148,7 @@ def tokenize_train(example, tokenizer, label2id):
     for offsets in tokenized.offset_mapping:
         tmp_labels = []
         
-        for idxs in offsets:        
-            start_idx = idxs[0]
-            end_idx = idxs[1]
+        for start_idx, end_idx in offsets:        
             # CLS token
             if start_idx == 0 and end_idx == 0:
                 tmp_labels.append(-100)
@@ -203,7 +193,7 @@ ds = ds.map(
     tokenize_train, 
     fn_kwargs={"tokenizer": tokenizer, "label2id": label2id}, 
     remove_columns=ds.column_names,
-    num_proc=cfg.environment.num_workers
+    num_proc=os.cpu_count()
 )
 
 
