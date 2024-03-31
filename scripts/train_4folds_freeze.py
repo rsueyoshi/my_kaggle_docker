@@ -11,6 +11,7 @@ import argparse
 from itertools import chain
 from functools import partial
 import random
+import re
 import sys
 from types import SimpleNamespace
 from typing import Optional, Tuple, Union
