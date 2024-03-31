@@ -5,6 +5,7 @@ load_dotenv("/kaggle/.env")
 WANDB_API_KEY = os.getenv("WANDB_API_KEY")
 
 
+from collections import defaultdict
 import json
 import argparse
 from itertools import chain
@@ -600,9 +601,45 @@ predictions = trainer.predict(eval_ds).predictions
 
 pred_df = metrics_computer.create_pred_df(predictions)
 wb_table = wandb.Table(columns=cols)
-for tokens, doc in eval_ds["tokens"], eval_ds["document"]:
-    doc_pred_df = pred_df[pred_df["document"] == doc]
-    doc_gt_df = metrics_computer.gt_df[metrics_computer.gt_df["document"] == doc]
-    for token
+for tokens, doc in zip(eval_ds["tokens"], eval_ds["document"]):
+    doc_gt_df = metrics_computer.gt_df[metrics_computer.gt_df["document"] == doc].reset_index(drop=True)
+    doc_pred_df = pred_df[pred_df["document"] == doc].reset_index(drop=True)
+    gt_row_idx = 0
+    pred_row_idx = 0
+    text_gt = ""
+    text_pred = ""
+    for i, token in enumerate(tokens):
+        if len(text_gt) > 0:
+            text_gt += " "
+        if i == doc_gt_df.loc[gt_row_idx, "token"]:
+            label_gt_idx = label2id[doc_gt_df.loc[gt_row_idx, "label"]]
+            text_gt += html_prefix.format(color=color_map[label_gt_idx])
+            text_gt += token
+            text_gt += html_sufix.format(label=label_gt_idx)
+            gt_row_idx += 1
+        else:
+            text_gt += token
+
+        if len(text_pred) > 0:
+            text_pred += " "
+        if i == doc_pred_df.loc[pred_row_idx, "token"]:
+            label_pred_idx = label2id[doc_pred_df.loc[gt_row_idx, "label"]]
+            text_pred += html_prefix.format(color=color_map[label_pred_idx])
+            text_pred += token
+            text_pred += html_sufix.format(label=label_pred_idx)
+            pred_row_idx += 1
+        else:
+            text_pred += token
+
+    metrics = metrics_computer.compute_metrics_from_df(doc_gt_df, doc_pred_df)
+
+    wb_table.add_data(
+        doc, 
+        wandb.Html(text_gt), 
+        wandb.Html(text_pred), 
+        metrics["f5"],
+        metrics["precision"],
+        metrics["recall"]
+    )
 
 wandb.finish()
