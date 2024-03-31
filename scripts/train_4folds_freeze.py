@@ -205,14 +205,25 @@ ds = DatasetDict()
 
 ex_data_names = [f"extra_{i}" for i in range(len(ex_data_list))]
 
-for key, data in zip(["original", *ex_data_names], [original_data, *ex_data_list]):
-    ds[key] = Dataset.from_dict({
-        "full_text": [x["full_text"] for x in data],
-        "document": [str(x["document"]) for x in data],
-        "tokens": [x["tokens"] for x in data],
-        "trailing_whitespace": [x["trailing_whitespace"] for x in data],
-        "provided_labels": [x["labels"] for x in data],
-    })
+if cfg.debug:
+    n = 64
+    for key, data in zip(["original", *ex_data_names], [original_data, *ex_data_list]):
+        ds[key] = Dataset.from_dict({
+            "full_text": [x["full_text"] for x in data[:n]],
+            "document": [str(x["document"]) for x in data[:n]],
+            "tokens": [x["tokens"] for x in data[:n]],
+            "trailing_whitespace": [x["trailing_whitespace"] for x in data[:n]],
+            "provided_labels": [x["labels"] for x in data[:n]],
+        })
+else:
+    for key, data in zip(["original", *ex_data_names], [original_data, *ex_data_list]):
+        ds[key] = Dataset.from_dict({
+            "full_text": [x["full_text"] for x in data],
+            "document": [str(x["document"]) for x in data],
+            "tokens": [x["tokens"] for x in data],
+            "trailing_whitespace": [x["trailing_whitespace"] for x in data],
+            "provided_labels": [x["labels"] for x in data],
+        })
 
 N_SPLITS = cfg.fold.num_folds
 folds = [

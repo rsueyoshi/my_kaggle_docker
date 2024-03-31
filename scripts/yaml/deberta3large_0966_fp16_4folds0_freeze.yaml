@@ -34,4 +34,4 @@ training:
     fp16: true
 output:
     suffix: /kaggle/output/deberta3large
-debug: False
+debug: True
