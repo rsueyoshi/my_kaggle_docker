@@ -10,20 +10,22 @@ RUN pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 torchaudio==2.0.2 -
 ADD requirements.txt /kaggle/requirements.txt
 RUN pip install -r requirements.txt
 
+# Kaggle CLI
+RUN sudo mkdir ~/.kaggle/
+ADD kaggle.json ~/.kaggle/kaggle.json
+# RUN chmod 600 ~/.kaggle/kaggle.json
+
+# AWS CLI
+ADD aws /kaggle/aws
+RUN sudo aws/install
+RUN rm -r aws
+ADD .aws ~
+
+# byobu
+# RUN sudo apt-get update
+# RUN sudo apt-get install byobu
+
 #jupyter notebookの起動
 ADD run.sh /opt/run.sh
 RUN chmod 700 /opt/run.sh
 CMD /opt/run.sh
-
-# Kaggle CLI
-RUN mv kaggle.json ~/.kaggle
-RUN chmod 600 /root/.kaggle/kaggle.json
-
-# AWS CLI
-RUN sudo ./aws/install
-RUN rm -r aws
-RUN mv .aws ~
-
-# byobu
-RUN sudo apt-get update
-RUN sudo apt-get install byobu

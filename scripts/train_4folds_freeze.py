@@ -1,3 +1,4 @@
+#%%
 from dotenv import load_dotenv
 import os
 
@@ -50,7 +51,7 @@ TRAINING_MODEL_PATH = cfg.architecture.backbone
 TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
 STRIDE = cfg.tokenizer.stride
 FOLD = cfg.fold.fold
-OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}"
+OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}"
 
 BATCH_SIZE = cfg.training.batch_size
 EVAL_BATCH_SIZE = cfg.training.eval_batch_size
@@ -74,7 +75,7 @@ wandb.login()
 
 run = wandb.init(
     project="kaggle_pii",
-    name=cfg.architecture.name,
+    name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}",
     config=cfg
 )
 
@@ -84,7 +85,7 @@ ex_data_list = []
 for i, ex_filepath in enumerate(cfg.dataset.extra_filepath):
     ex_data = json.load(open(ex_filepath))
     print(f"external datapoints {i}: {len(ex_data)}")
-    ex_data_list.appemd(ex_data)
+    ex_data_list.append(ex_data)
 
 all_labels = sorted(list(set(chain(*[x["labels"] for x in original_data]))))
 label2id = {l: i for i,l in enumerate(all_labels)}
@@ -206,8 +207,8 @@ ds = DatasetDict()
 ex_data_names = [f"extra_{i}" for i in range(len(ex_data_list))]
 
 if cfg.debug:
-    n = 64
-    for key, data in zip(["original", *ex_data_names], [original_data, *ex_data_list]):
+    n = 128
+    for key, data in zip(["original"], [original_data]):
         ds[key] = Dataset.from_dict({
             "full_text": [x["full_text"] for x in data[:n]],
             "document": [str(x["document"]) for x in data[:n]],
@@ -240,7 +241,10 @@ exclude_indices = negative_idxs[int(len(negative_idxs) * cfg.dataset.negative_ra
 train_idx, eval_idx = folds[FOLD]
 
 original_ds = ds["original"].select([i for i in train_idx if i not in exclude_indices])
-train_ds = concatenate_datasets([original_ds, *[ds[name] for name in ex_data_names]])
+if cfg.debug:
+    train_ds = original_ds
+else:
+    train_ds = concatenate_datasets([original_ds, *[ds[name] for name in ex_data_names]])
 train_ds = train_ds.map(
     tokenize_train, 
     fn_kwargs={"tokenizer": tokenizer, "label2id": label2id}, 
@@ -569,7 +573,7 @@ args = TrainingArguments(
     do_eval=do_eval,
     load_best_model_at_end=do_eval,
     eval_steps=EVAL_STEPS,
-    eval_delay=EVAL_STEPS*2,
+    eval_delay=EVAL_STEPS*6,
     save_strategy=cfg.training.evaluation_strategy,
     save_steps=EVAL_STEPS,
     save_total_limit=1,
@@ -578,7 +582,6 @@ args = TrainingArguments(
     logging_steps=20,
     lr_scheduler_type=cfg.training.schedule,
     metric_for_best_model=cfg.training.metric_for_best_model,
-    greater_is_better=True,
     warmup_ratio=0.1,
     weight_decay=0.01,
 )
@@ -587,7 +590,8 @@ metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)
 trainer = Trainer(
     model=model, 
     args=args, 
-    train_dataset=ds,
+    train_dataset=train_ds,
+    eval_dataset=eval_ds,
     data_collator=collator, 
     tokenizer=tokenizer,
     compute_metrics=metrics_computer,
@@ -611,7 +615,11 @@ color_map = {i: v for i, v in enumerate(colors)}
 
 predictions = trainer.predict(eval_ds).predictions
 
-pred_df = metrics_computer.create_pred_df(predictions)
+if cfg.debug:
+    pred_df = metrics_computer.gt_df
+else:
+    pred_df = metrics_computer.create_pred_df(predictions)
+#%%
 wb_table = wandb.Table(columns=cols)
 for tokens, doc in zip(eval_ds["tokens"], eval_ds["document"]):
     doc_gt_df = metrics_computer.gt_df[metrics_computer.gt_df["document"] == doc].reset_index(drop=True)
@@ -623,22 +631,22 @@ for tokens, doc in zip(eval_ds["tokens"], eval_ds["document"]):
     for i, token in enumerate(tokens):
         if len(text_gt) > 0:
             text_gt += " "
-        if i == doc_gt_df.loc[gt_row_idx, "token"]:
+        if (gt_row_idx < len(doc_gt_df)) and (i == doc_gt_df.loc[gt_row_idx, "token"]):
             label_gt_idx = label2id[doc_gt_df.loc[gt_row_idx, "label"]]
             text_gt += html_prefix.format(color=color_map[label_gt_idx])
             text_gt += token
-            text_gt += html_sufix.format(label=label_gt_idx)
+            text_gt += html_sufix.format(label=doc_gt_df.loc[gt_row_idx, "label"])
             gt_row_idx += 1
         else:
             text_gt += token
 
         if len(text_pred) > 0:
             text_pred += " "
-        if i == doc_pred_df.loc[pred_row_idx, "token"]:
-            label_pred_idx = label2id[doc_pred_df.loc[gt_row_idx, "label"]]
+        if (pred_row_idx < len(doc_pred_df)) and (i == doc_pred_df.loc[pred_row_idx, "token"]):
+            label_pred_idx = label2id[doc_pred_df.loc[pred_row_idx, "label"]]
             text_pred += html_prefix.format(color=color_map[label_pred_idx])
             text_pred += token
-            text_pred += html_sufix.format(label=label_pred_idx)
+            text_pred += html_sufix.format(label=doc_pred_df.loc[pred_row_idx, "label"])
             pred_row_idx += 1
         else:
             text_pred += token
@@ -654,4 +662,8 @@ for tokens, doc in zip(eval_ds["tokens"], eval_ds["document"]):
         metrics["recall"]
     )
 
+wandb.log({f"compare_gt_pred_fold{FOLD}": wb_table})
+#%%
 wandb.finish()
+
+# %%
