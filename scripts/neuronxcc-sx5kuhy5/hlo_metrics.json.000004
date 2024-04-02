@@ -1,0 +1,14 @@
+{
+   "AliasedOutputSize" : 0,
+   "ArithmeticIntensity" : 52.483161926269531,
+   "ConstantSize" : 0,
+   "HloInputCount" : -1,
+   "HloMacCount" : 7558660096,
+   "HloOutputCount" : -1,
+   "IfmapSize" : 0,
+   "OfmapSize" : 0,
+   "OutputsReadFromCount" : -1,
+   "PassthroughTensorsCount" : -1,
+   "RedundantOutputCount" : -1,
+   "Traffic" : 288041338
+}

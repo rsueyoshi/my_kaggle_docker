@@ -2,7 +2,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv("/kaggle/.env")
+load_dotenv("/home/ubuntu/my_kaggle_docker/.env")
 WANDB_API_KEY = os.getenv("WANDB_API_KEY")
 
 
