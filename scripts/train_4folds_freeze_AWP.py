@@ -20,7 +20,7 @@ import yaml
 
 from transformers import (
     AutoTokenizer, 
-    Trainer, 
+    # Trainer, 
     TrainingArguments,
     AutoModelForTokenClassification, 
     DataCollatorForTokenClassification, 
@@ -33,6 +33,8 @@ import torch
 from spacy.lang.en import English
 
 import wandb
+
+from utils.trainer_utils import Trainer_Awp as Trainer
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
