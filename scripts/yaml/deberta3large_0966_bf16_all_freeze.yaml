@@ -25,9 +25,7 @@ training:
     grad_accumulation: 16
     learning_rate: 2.5e-5
     schedule: linear 
-    evaluation_strategy: steps
-    eval_steps: 50
-    metric_for_best_model: f5
+    evaluation_strategy: "no"
     warmup_ratio: 0.1
     weight_decay: 0.01
     bf16: True

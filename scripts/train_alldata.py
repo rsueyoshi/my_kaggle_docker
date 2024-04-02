@@ -293,7 +293,6 @@ args = TrainingArguments(
     report_to="wandb",
     evaluation_strategy=cfg.training.evaluation_strategy,
     do_eval=do_eval,
-    save_total_limit=1,
     logging_steps=20,
     lr_scheduler_type=cfg.training.schedule,
     metric_for_best_model="f1",
