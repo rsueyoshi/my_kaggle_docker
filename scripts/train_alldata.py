@@ -58,7 +58,12 @@ print(cfg)
 TRAINING_MODEL_PATH = cfg.architecture.backbone
 TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
 STRIDE = cfg.tokenizer.stride
-OUTPUT_DIR = cfg.output.dir
+if cfg.architecture.freeze_layers:
+    OUTPUT_DIR = f"{cfg.output.dir}_freeze{cfg.architecture.freeze_layers}"
+    name = f"{cfg.architecture.name}_freeze{cfg.architecture.freeze_layers}"
+else:
+    OUTPUT_DIR = cfg.output.dir
+    name = cfg.architecture.name
 
 BATCH_SIZE = cfg.training.batch_size
 ACC_STEPS = cfg.training.grad_accumulation
@@ -76,7 +81,6 @@ def seed_everything(seed: int):
 
 seed_everything(cfg.environment.seed)
 
-name = cfg.architecture.name
 
 wandb.login()
 
@@ -262,6 +266,13 @@ elif cfg.model_class == "DebertaV2LstmForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+if cfg.architecture.freeze_layers:
+    for param in model.deberta.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
+
 collator = DataCollatorForTokenClassification(tokenizer, pad_to_multiple_of=16)
 
 
@@ -282,6 +293,7 @@ args = TrainingArguments(
     report_to="wandb",
     evaluation_strategy=cfg.training.evaluation_strategy,
     do_eval=do_eval,
+    save_total_limit=1,
     logging_steps=20,
     lr_scheduler_type=cfg.training.schedule,
     metric_for_best_model="f1",
