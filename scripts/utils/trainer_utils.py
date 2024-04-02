@@ -3,7 +3,6 @@ from transformers import Trainer
 from transformers.utils import (
     is_sagemaker_mp_enabled, 
     is_apex_available,
-    smp_forward_backward,
 )
 
 if is_apex_available():
@@ -67,15 +66,44 @@ class AWP:
 
 
 class Trainer_Awp(Trainer):
-    def __init__(self, adv_param='weight', adv_lr=0.001, adv_eps=0.001, awp_start=1, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+    def __init__(
+        self, 
+        model=None,
+        args=None,
+        data_collator=None,
+        train_dataset=None,
+        eval_dataset=None,
+        tokenizer=None,
+        model_init=None,
+        compute_metrics=None,
+        callbacks=None,
+        optimizers=(None, None),
+        preprocess_logits_for_metrics=None,
+        adv_param='weight', 
+        adv_lr=0.001,
+        adv_eps=0.001, 
+        awp_start=1
+    ):
+        super().__init__(
+            model,
+            args,
+            data_collator,
+            train_dataset,
+            eval_dataset,
+            tokenizer,
+            model_init,
+            compute_metrics,
+            callbacks,
+            optimizers,
+            preprocess_logits_for_metrics
+        )
         self.adv_param = adv_param
         self.adv_lr = adv_lr
         self.adv_eps = adv_eps
         self.awp_start = awp_start
 
-    def _inner_training_loop(self, *args, **kwargs):
-        super()._inner_training_loop(self, *args, **kwargs)
+    def create_optimizer_and_scheduler(self, num_training_steps: int):
+        super().create_optimizer_and_scheduler(num_training_steps)
         self.awp = AWP(self.model, self.optimizer, self.adv_param, self.adv_lr, self.adv_eps)
 
     def training_step(self, model, inputs):
@@ -90,6 +118,7 @@ class Trainer_Awp(Trainer):
             self.awp.perturb()
 
         if is_sagemaker_mp_enabled():
+            from transformers.trainer_pt_utils import smp_forward_backward
             loss_mb = smp_forward_backward(model, inputs, self.args.gradient_accumulation_steps)
             return loss_mb.reduce_mean().detach().to(self.args.device)
 

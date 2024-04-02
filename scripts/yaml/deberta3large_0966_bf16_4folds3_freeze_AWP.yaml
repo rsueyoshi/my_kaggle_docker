@@ -5,7 +5,7 @@ dataset:
     negative_ratio: 0.3
 fold:
     num_folds: 4
-    fold: 0
+    fold: 3
 model_class: DebertaV2ForTokenClassification
 architecture:
     backbone: microsoft/deberta-v3-large

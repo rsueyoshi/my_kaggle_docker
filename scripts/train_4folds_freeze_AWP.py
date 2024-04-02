@@ -53,7 +53,7 @@ TRAINING_MODEL_PATH = cfg.architecture.backbone
 TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
 STRIDE = cfg.tokenizer.stride
 FOLD = cfg.fold.fold
-OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}"
+OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP"
 
 BATCH_SIZE = cfg.training.batch_size
 EVAL_BATCH_SIZE = cfg.training.eval_batch_size
