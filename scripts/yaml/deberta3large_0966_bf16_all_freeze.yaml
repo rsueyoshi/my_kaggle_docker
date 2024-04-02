@@ -33,5 +33,5 @@ training:
     bf16: True
     fp16: False
 output:
-    suffix: /kaggle/output/deberta3large
+    dir: /kaggle/output/deberta3large
 debug: False
