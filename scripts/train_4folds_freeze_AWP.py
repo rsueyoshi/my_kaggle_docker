@@ -77,7 +77,7 @@ wandb.login()
 
 run = wandb.init(
     project="kaggle_pii",
-    name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}",
+    name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP",
     config=cfg
 )
 
