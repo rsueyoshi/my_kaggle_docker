@@ -34,7 +34,7 @@ from spacy.lang.en import English
 
 import wandb
 
-from utils.trainer_utils import Trainer_Awp as Trainer
+from utils.trainer_utils_old import Trainer_Awp as Trainer
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
