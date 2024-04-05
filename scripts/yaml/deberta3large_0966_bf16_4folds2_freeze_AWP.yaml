@@ -33,9 +33,10 @@ training:
     bf16: True
     fp16: False
     adv_param: 'weight'
-    adv_lr: 0.00001
-    adv_eps: 0.00001
+    adv_lr: 1.0e-5
+    adv_eps: 1.0e-5
     awp_start: 1
 output:
     suffix: /kaggle/output/deberta3large
+is_finished: False
 debug: False

@@ -1,0 +1,42 @@
+architecture:
+  backbone: microsoft/deberta-v3-large
+  freeze_embedding: false
+  freeze_layers: 6
+  name: ec2_deberta_large_wur1_bf16_0966
+dataset:
+  extra_filepath:
+  - /kaggle/input/pii-mixtral8x7b-generated-essays/mpware_mixtral8x7b_v1.1-no-i-username.json
+  json_filepath: /kaggle/input/pii-detection-removal-from-educational-data/train.json
+  negative_ratio: 0.3
+debug: false
+environment:
+  mixed_precision: true
+  seed: 42
+fold:
+  fold: 0
+  num_folds: 4
+is_finished: true
+model_class: DebertaV2ForTokenClassification
+output:
+  suffix: /kaggle/output/deberta3large_wur1
+tokenizer:
+  max_length: 1280
+  stride: 128
+training:
+  adv_eps: 0.01
+  adv_lr: 0.1
+  adv_param: weight
+  awp_start: 1
+  batch_size: 1
+  bf16: true
+  epochs: 3
+  eval_batch_size: 1
+  eval_steps: 50
+  evaluation_strategy: steps
+  fp16: false
+  grad_accumulation: 16
+  learning_rate: 2.5e-05
+  metric_for_best_model: f5
+  schedule: linear
+  warmup_ratio: 1
+  weight_decay: 0.01

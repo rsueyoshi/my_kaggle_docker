@@ -36,7 +36,7 @@ from spacy.lang.en import English
 
 import wandb
 
-from utils.trainer_utils_old import Trainer_Awp as Trainer
+from utils.trainer_utils import Trainer_Awp as Trainer
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
@@ -59,7 +59,7 @@ else:
     TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
     STRIDE = cfg.tokenizer.stride
     FOLD = cfg.fold.fold
-    OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP"
+    OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP2"
 
     BATCH_SIZE = cfg.training.batch_size
     EVAL_BATCH_SIZE = cfg.training.eval_batch_size
@@ -81,10 +81,17 @@ else:
 
     wandb.login()
 
+    checkpoints = glob.glob(f"{OUTPUT_DIR}/checkpoint-*")
+    if len(checkpoints) > 0:
+        resume=True
+    else:
+        resume=False
+
     run = wandb.init(
         project="kaggle_pii",
-        name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP",
-        config=cfg
+        name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}_AWP2",
+        config=cfg,
+        resume=resume,
     )
 
     original_data = json.load(open(cfg.dataset.json_filepath))
@@ -592,6 +599,7 @@ else:
         metric_for_best_model=cfg.training.metric_for_best_model,
         warmup_ratio=0.1,
         weight_decay=0.01,
+        gradient_checkpointing=cfg.training.gradient_checkpointing,
     )
 
     metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)
@@ -609,11 +617,7 @@ else:
         awp_start=cfg.training.awp_start,
     )
 
-    checkpoints = glob.glob(f"{OUTPUT_DIR}/checkpoint-*")
-    if len(checkpoints) > 0:
-        trainer.train(resume_from_checkpoint=True)
-    else
-        trainer.train(resume_from_checkpoint=False)
+    trainer.train(resume_from_checkpoint=resume)
 
 
     # 推論結果の可視化
