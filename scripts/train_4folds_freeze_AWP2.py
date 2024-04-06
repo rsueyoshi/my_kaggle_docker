@@ -688,7 +688,7 @@ else:
 
     cfg_tmp["is_finished"] = True
 
-    with open(parser_args.config, "w")as f:
-        yaml.dump(cfg_tmp, f, default_flow_style=False, allow_unicode=True)
+    # with open(parser_args.config, "w")as f:
+    #     yaml.dump(cfg_tmp, f, default_flow_style=False, allow_unicode=True)
 
     # %%
