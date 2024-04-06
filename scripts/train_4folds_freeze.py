@@ -23,7 +23,7 @@ from transformers import (
     Trainer, 
     TrainingArguments,
     AutoModelForTokenClassification, 
-    DataCollatorForTokenClassification, 
+    # DataCollatorForTokenClassification, 
     EvalPrediction,
 )
 from datasets import Dataset, DatasetDict, concatenate_datasets
@@ -33,6 +33,8 @@ import torch
 from spacy.lang.en import English
 
 import wandb
+
+from utils.collator import Collator
 
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
@@ -550,7 +552,7 @@ for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
     for param in layer.parameters():
         param.requires_grad = False
 
-collator = DataCollatorForTokenClassification(tokenizer, pad_to_multiple_of=16)
+collator = Collator(tokenizer)
 
 
 # I actually chose to not use any validation set. This is only for the model I use for submission.
@@ -584,6 +586,7 @@ args = TrainingArguments(
     metric_for_best_model=cfg.training.metric_for_best_model,
     warmup_ratio=0.1,
     weight_decay=0.01,
+    gradient_checkpointing=cfg.training.gradient_checkpointing,
 )
 
 metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)

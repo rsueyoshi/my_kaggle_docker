@@ -16,7 +16,7 @@ environment:
     mixed_precision: true
     seed: 42
 tokenizer:
-    max_length: 1790
+    max_length: 1808
     stride: 128
 training:
     batch_size: 1
@@ -40,4 +40,4 @@ training:
 output:
     suffix: /kaggle/output/deberta3large
 is_finished: False
-debug: False
+debug: false

@@ -20,7 +20,7 @@ tokenizer:
     stride: 128
 training:
     batch_size: 1
-    eval_batch_size: 1
+    eval_batch_size: 2
     epochs: 4
     grad_accumulation: 16
     learning_rate: 2.5e-5
@@ -34,5 +34,5 @@ training:
     fp16: False
     gradient_checkpointing: true
 output:
-    suffix: /kaggle/output/deberta3large
-debug: False
+    suffix: /kaggle/output/deberta3large_gc
+debug: false
