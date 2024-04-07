@@ -53,7 +53,7 @@ TRAINING_MODEL_PATH = cfg.architecture.backbone
 TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
 STRIDE = cfg.tokenizer.stride
 FOLD = cfg.fold.fold
-OUTPUT_DIR = f"{cfg.output.suffix}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}"
+OUTPUT_DIR = f"/kaggle/output/{cfg.architecture.name}"
 
 BATCH_SIZE = cfg.training.batch_size
 EVAL_BATCH_SIZE = cfg.training.eval_batch_size
@@ -77,7 +77,7 @@ wandb.login()
 
 run = wandb.init(
     project="kaggle_pii",
-    name=f"{cfg.architecture.name}_fold{FOLD}_freeze{cfg.architecture.freeze_layers}",
+    name=f"{cfg.architecture.name}",
     config=cfg
 )
 
@@ -519,6 +519,16 @@ class MetricsComputer:
 
 if cfg.model_class == "DebertaV2ForTokenClassification":
     model = AutoModelForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "DebertaV2Do5ForTokenClassification":
+    from models.debertav2do5 import DebertaV2Do5ForTokenClassification
+    model = DebertaV2Do5ForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
         id2label=id2label,

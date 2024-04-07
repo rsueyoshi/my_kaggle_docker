@@ -7,22 +7,15 @@ from transformers.models.deberta_v2 import DebertaV2PreTrainedModel, DebertaV2Mo
 from transformers.modeling_outputs import TokenClassifierOutput, TokenClassifierOutput
 
 
-class DebertaV2CnnForTokenClassification(DebertaV2PreTrainedModel):
+class DebertaV2Do5ForTokenClassification(DebertaV2PreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
 
         self.deberta = DebertaV2Model(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.dropout22 = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         
-        self.cnn = nn.Conv1d(
-            config.hidden_size, 
-            config.hidden_size, 
-            kernel_size=3, 
-            padding=1
-        )
         self.relu = nn.ReLU()
         self.dropout1 = nn.Dropout(0.1)
         self.dropout2 = nn.Dropout(0.2)
@@ -62,10 +55,7 @@ class DebertaV2CnnForTokenClassification(DebertaV2PreTrainedModel):
             return_dict=return_dict,
         )
         
-        sequence_output = self.dropout(outputs[0])
-        sequence_output = self.cnn(sequence_output.permute(0, 2, 1))
-        sequence_output = self.relu(sequence_output.permute(0, 2, 1))
-        sequence_output = self.dropout22(sequence_output)
+        sequence_output = outputs[0]
         
         logits1 = self.classifier(self.dropout1(sequence_output))
         logits2 = self.classifier(self.dropout2(sequence_output))

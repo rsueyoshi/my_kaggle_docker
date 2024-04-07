@@ -58,12 +58,8 @@ print(cfg)
 TRAINING_MODEL_PATH = cfg.architecture.backbone
 TRAINING_MAX_LENGTH = cfg.tokenizer.max_length
 STRIDE = cfg.tokenizer.stride
-if cfg.architecture.freeze_layers:
-    OUTPUT_DIR = f"{cfg.output.dir}_freeze{cfg.architecture.freeze_layers}"
-    name = f"{cfg.architecture.name}_freeze{cfg.architecture.freeze_layers}"
-else:
-    OUTPUT_DIR = cfg.output.dir
-    name = cfg.architecture.name
+OUTPUT_DIR = f"/kaggle/output/{cfg.architecture.name}"
+name = cfg.architecture.name
 
 BATCH_SIZE = cfg.training.batch_size
 ACC_STEPS = cfg.training.grad_accumulation
@@ -300,7 +296,8 @@ args = TrainingArguments(
     greater_is_better=True,
     warmup_ratio=0.1,
     weight_decay=0.01,
-    save_strategy="epoch"
+    gradient_checkpointing=cfg.training.gradient_checkpointing,
+    save_strategy="epoch",
 )
 
 trainer = Trainer(
