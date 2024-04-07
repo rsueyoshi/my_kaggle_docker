@@ -547,7 +547,7 @@ elif cfg.model_class == "DebertaV2CnnForTokenClassification":
     )
 
 elif cfg.model_class == "DebertaV2LstmForTokenClassification":
-    from models.debertav2cnn import DebertaV2LstmForTokenClassification
+    from models.debertav2lstm import DebertaV2LstmForTokenClassification
     model = DebertaV2LstmForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
