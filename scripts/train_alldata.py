@@ -242,6 +242,16 @@ if cfg.model_class == "DebertaV2ForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+elif cfg.model_class == "DebertaV2Do5ForTokenClassification":
+    from models.debertav2do5 import DebertaV2Do5ForTokenClassification
+    model = DebertaV2Do5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 elif cfg.model_class == "DebertaV2CnnForTokenClassification":
     from models.debertav2cnn import DebertaV2CnnForTokenClassification
     model = DebertaV2CnnForTokenClassification.from_pretrained(
@@ -253,7 +263,7 @@ elif cfg.model_class == "DebertaV2CnnForTokenClassification":
     )
 
 elif cfg.model_class == "DebertaV2LstmForTokenClassification":
-    from models.debertav2cnn import DebertaV2LstmForTokenClassification
+    from models.debertav2lstm import DebertaV2LstmForTokenClassification
     model = DebertaV2LstmForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
