@@ -6,10 +6,10 @@ dataset:
 fold:
     num_folds: 0
     fold: 0
-model_class: DebertaV2CnnForTokenClassification
+model_class: DebertaV2LstmForTokenClassification
 architecture:
     backbone: microsoft/deberta-v3-large
-    name: EX009_2
+    name: EX010
     freeze_layers: 6
     freeze_embedding: False
 environment:

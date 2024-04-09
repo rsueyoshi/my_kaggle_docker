@@ -536,6 +536,16 @@ elif cfg.model_class == "DebertaV2Do5ForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+elif cfg.model_class == "DebertaDo5ForTokenClassification":
+    from models.debertado5 import DebertaDo5ForTokenClassification
+    model = DebertaDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 elif cfg.model_class == "DebertaV2CnnForTokenClassification":
     from models.debertav2cnn import DebertaV2CnnForTokenClassification
     model = DebertaV2CnnForTokenClassification.from_pretrained(

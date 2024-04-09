@@ -4,12 +4,12 @@ dataset:
     - /kaggle/input/pii-mixtral8x7b-generated-essays/mpware_mixtral8x7b_v1.1-no-i-username.json
     negative_ratio: 0.3
 fold:
-    num_folds: 0
+    num_folds: 4
     fold: 0
-model_class: DebertaV2CnnForTokenClassification
+model_class: DebertaDo5ForTokenClassification
 architecture:
-    backbone: microsoft/deberta-v3-large
-    name: EX009_2
+    backbone: microsoft/deberta-large
+    name: EX011
     freeze_layers: 6
     freeze_embedding: False
 environment:
@@ -25,7 +25,7 @@ training:
     grad_accumulation: 16
     learning_rate: 2.5e-5
     schedule: linear 
-    evaluation_strategy: "no"
+    evaluation_strategy: steps
     eval_steps: 50
     metric_for_best_model: f5
     warmup_ratio: 0.1
@@ -33,4 +33,4 @@ training:
     bf16: True
     fp16: False
     gradient_checkpointing: true
-debug: false
+debug: False
