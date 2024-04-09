@@ -78,7 +78,8 @@ wandb.login()
 run = wandb.init(
     project="kaggle_pii",
     name=f"{cfg.architecture.name}",
-    config=cfg
+    config=cfg,
+    resume=True,
 )
 
 original_data = json.load(open(cfg.dataset.json_filepath))
@@ -641,7 +642,7 @@ trainer = Trainer(
     compute_metrics=metrics_computer,
 )
 
-trainer.train()
+trainer.train(resume_from_checkpoint=True)
 
 
 # 推論結果の可視化

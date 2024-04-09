@@ -78,33 +78,3 @@ class DebertaDo5ForTokenClassification(DebertaPreTrainedModel):
         return TokenClassifierOutput(
             loss=loss, logits=logits, hidden_states=outputs.hidden_states, attentions=outputs.attentions
         )
-
-    
-    def save_pretrained(
-        self,
-        save_directory,
-        is_main_process=True,
-        state_dict=None,
-        save_function=torch.save,
-        push_to_hub=False,
-        max_shard_size="5GB",
-        safe_serialization=True,
-        variant=None,
-        token=None,
-        save_peft_format=True,
-        **kwargs,
-    ):
-        super().save_pretrained(
-            save_directory,
-            is_main_process=True,
-            state_dict=None,
-            save_function=torch.save,
-            push_to_hub=False,
-            max_shard_size="5GB",
-            safe_serialization=True,
-            variant=None,
-            token=None,
-            save_peft_format=True,
-            **kwargs,
-        )
-        torch.save(self.state_dict(), os.path.join(save_directory, "pt_output.pt"))  
