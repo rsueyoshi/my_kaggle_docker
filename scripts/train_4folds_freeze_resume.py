@@ -629,6 +629,7 @@ args = TrainingArguments(
     warmup_ratio=0.1,
     weight_decay=0.01,
     gradient_checkpointing=cfg.training.gradient_checkpointing,
+    save_safetensors=True,
 )
 
 metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)

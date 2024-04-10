@@ -39,6 +39,7 @@ from utils.collator import Collator
 parser = argparse.ArgumentParser(description="")
 parser.add_argument("-C", "--config", help="config filename")
 parser_args, _ = parser.parse_known_args(sys.argv)
+print(parser_args.config)
 cfg = yaml.safe_load(open(parser_args.config).read())
 
 for k, v in cfg.items():
@@ -78,7 +79,7 @@ wandb.login()
 run = wandb.init(
     project="kaggle_pii",
     name=f"{cfg.architecture.name}",
-    config=cfg
+    config=cfg,
 )
 
 original_data = json.load(open(cfg.dataset.json_filepath))
@@ -628,6 +629,7 @@ args = TrainingArguments(
     warmup_ratio=0.1,
     weight_decay=0.01,
     gradient_checkpointing=cfg.training.gradient_checkpointing,
+    save_safetensors=True,
 )
 
 metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)
@@ -641,6 +643,7 @@ trainer = Trainer(
     compute_metrics=metrics_computer,
 )
 
+# trainer.train(resume_from_checkpoint=True)
 trainer.train()
 
 

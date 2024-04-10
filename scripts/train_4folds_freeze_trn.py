@@ -586,6 +586,7 @@ args = TrainingArguments(
     metric_for_best_model=cfg.training.metric_for_best_model,
     warmup_ratio=0.1,
     weight_decay=0.01,
+    save_safetensors=True,
 )
 
 metrics_computer = MetricsComputer(eval_ds=eval_ds, label2id=label2id)

@@ -21,7 +21,7 @@ tokenizer:
 training:
     batch_size: 1
     eval_batch_size: 1
-    epochs: 6
+    epochs: 5
     grad_accumulation: 16
     learning_rate: 2.5e-5
     schedule: linear 
