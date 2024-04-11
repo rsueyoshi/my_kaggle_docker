@@ -547,6 +547,26 @@ elif cfg.model_class == "DebertaV2Do5ForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+elif cfg.model_class == "DebertaDo5ForTokenClassification_6hiddenstates":
+    from models.debertav2do5_6hiddenstates import DebertaDo5ForTokenClassification_6hiddenstates
+    model = DebertaDo5ForTokenClassification_6hiddenstates.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "DebertaDo5ForTokenClassification_12hiddenstates":
+    from models.debertav2do5_12hiddenstates import DebertaDo5ForTokenClassification_12hiddenstates
+    model = DebertaDo5ForTokenClassification_12hiddenstates.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 elif cfg.model_class == "DebertaCnnForTokenClassification":
     from models.debertacnn import DebertaCnnForTokenClassification
     model = DebertaCnnForTokenClassification.from_pretrained(
