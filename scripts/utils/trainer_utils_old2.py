@@ -17,7 +17,6 @@ class AWP:
         adv_param="weight",
         adv_lr=1,
         adv_eps=0.2,
-        adv_step=1
     ):
         self.model = model
         self.optimizer = optimizer
@@ -27,7 +26,6 @@ class AWP:
         self.adv_eps = adv_eps
         self.backup = {}
         self.backup_eps = {}
-        self.adv_step = adv_step
 
     def __call__(self, inputs):
         self._save()
@@ -35,23 +33,6 @@ class AWP:
         adv_loss = self.compute_loss_fn(self.model, inputs)   
         adv_loss.backward()  
         self._restore()
-
-    # def attack_backward(self, tokens, attention_mask, token_type_ids, label, epoch):
-    def attack_backward(self, inputs, epoch):
-        if self.adv_lr == 0:
-            return None
-
-        self._save()
-        for _ in range(self.adv_step):
-            self._attack_step()
-            with torch.cuda.amp.autocast():
-
-                # out = self.model(tokens, attention_mask=attention_mask, token_type_ids=token_type_ids).view(-1, 1)
-                adv_loss = self.compute_loss_fn(self.model, inputs)
-                # adv_loss = torch.masked_select(adv_loss, label.view(-1, 1) != -1).mean()
-
-            self.optimizer.zero_grad()
-        return adv_loss
 
     def _attack_step(self):
         e = 1e-6
@@ -159,8 +140,6 @@ class Trainer_Awp(Trainer):
 
         # AWP実行
         if self.state.epoch >= self.awp_start:
-            adv_loss = self.awp.attack_backward(inputs)
-            self.optimizer.step()
-            self.awp._restore()
+            self.awp(inputs)
 
         return loss.detach() / self.args.gradient_accumulation_steps
