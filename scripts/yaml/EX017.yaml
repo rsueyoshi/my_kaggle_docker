@@ -1,0 +1,36 @@
+dataset: 
+    json_filepath: /kaggle/input/pii-detection-removal-from-educational-data/train.json
+    extra_filepath:
+    - /kaggle/input/pii-mixtral8x7b-generated-essays/mpware_mixtral8x7b_v1.1-no-i-username.json
+    negative_ratio: 0.3
+fold:
+    num_folds: 4
+    fold: 0
+model_class: LongformerDo5ForTokenClassification
+architecture:
+    backbone: allenai/longformer-large-4096
+    name: EX017
+    freeze_layers: 6
+    freeze_embedding: False
+environment:
+    mixed_precision: true
+    seed: 42
+tokenizer:
+    max_length: 3072
+    stride: 128
+training:
+    batch_size: 2
+    eval_batch_size: 2
+    epochs: 4
+    grad_accumulation: 8
+    learning_rate: 2.5e-5
+    schedule: linear 
+    evaluation_strategy: steps
+    eval_steps: 50
+    metric_for_best_model: f5
+    warmup_ratio: 0.1
+    weight_decay: 0.01
+    bf16: True
+    fp16: False
+    gradient_checkpointing: true
+debug: false
