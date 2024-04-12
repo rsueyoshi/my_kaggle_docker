@@ -608,6 +608,26 @@ elif cfg.model_class == "DebertaV2LstmForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+elif cfg.model_class == "RobertaDo5ForTokenClassification":
+    from models.robertado5 import RobertaModelDo5ForTokenClassification
+    model = RobertaModelDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "LongformerDo5ForTokenClassification":
+    from models.longformerdo5 import LongformerModelDo5ForTokenClassification
+    model = LongformerModelDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 for param in model.deberta.embeddings.parameters():
     param.requires_grad = False if cfg.architecture.freeze_embedding else True
 for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
