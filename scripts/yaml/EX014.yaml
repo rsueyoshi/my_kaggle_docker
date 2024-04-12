@@ -20,7 +20,7 @@ tokenizer:
     stride: 128
 training:
     batch_size: 1
-    eval_batch_size: 2
+    eval_batch_size: 1
     epochs: 4
     grad_accumulation: 16
     learning_rate: 2.5e-5
