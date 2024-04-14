@@ -28,6 +28,7 @@ import torch
 
 import wandb
 from seqeval.metrics import recall_score, precision_score
+from utils.collator import Collator
 
 def init_logger(log_file='train.log'):
     from logging import getLogger, INFO, FileHandler, Formatter, StreamHandler
@@ -242,9 +243,49 @@ if cfg.model_class == "DebertaV2ForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+elif cfg.model_class == "DebertaDo5ForTokenClassification":
+    from models.debertado5 import DebertaDo5ForTokenClassification
+    model = DebertaDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 elif cfg.model_class == "DebertaV2Do5ForTokenClassification":
     from models.debertav2do5 import DebertaV2Do5ForTokenClassification
     model = DebertaV2Do5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "DebertaV2Do5ForTokenClassification_6hiddenstates":
+    from models.debertav2do5_6hiddenstates import DebertaV2Do5ForTokenClassification_6hiddenstates
+    model = DebertaV2Do5ForTokenClassification_6hiddenstates.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "DebertaV2Do5ForTokenClassification_12hiddenstates":
+    from models.debertav2do5_12hiddenstates import DebertaV2Do5ForTokenClassification_12hiddenstates
+    model = DebertaV2Do5ForTokenClassification_12hiddenstates.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "DebertaCnnForTokenClassification":
+    from models.debertacnn import DebertaCnnForTokenClassification
+    model = DebertaCnnForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
         id2label=id2label,
@@ -262,6 +303,17 @@ elif cfg.model_class == "DebertaV2CnnForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
+
+elif cfg.model_class == "DebertaLstmForTokenClassification":
+    from models.debertalstm import DebertaLstmForTokenClassification
+    model = DebertaLstmForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
 elif cfg.model_class == "DebertaV2LstmForTokenClassification":
     from models.debertav2lstm import DebertaV2LstmForTokenClassification
     model = DebertaV2LstmForTokenClassification.from_pretrained(
@@ -272,14 +324,46 @@ elif cfg.model_class == "DebertaV2LstmForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
-if cfg.architecture.freeze_layers:
+elif cfg.model_class == "RobertaDo5ForTokenClassification":
+    from models.robertado5 import RobertaDo5ForTokenClassification
+    model = RobertaDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+elif cfg.model_class == "LongformerDo5ForTokenClassification":
+    from models.longformerdo5 import LongformerDo5ForTokenClassification
+    model = LongformerDo5ForTokenClassification.from_pretrained(
+        TRAINING_MODEL_PATH,
+        num_labels=len(all_labels),
+        id2label=id2label,
+        label2id=label2id,
+        ignore_mismatched_sizes=True
+    )
+
+if "Deberta" in cfg.model_class:
     for param in model.deberta.embeddings.parameters():
         param.requires_grad = False if cfg.architecture.freeze_embedding else True
     for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
         for param in layer.parameters():
             param.requires_grad = False
+elif "Roberta" in cfg.model_class:
+    for param in model.roberta.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.roberta.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
+elif "Longformer" in cfg.model_class:
+    for param in model.longformer.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.longformer.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
 
-collator = DataCollatorForTokenClassification(tokenizer, pad_to_multiple_of=16)
+collator = Collator(tokenizer)
 
 
 # I actually chose to not use any validation set. This is only for the model I use for submission.

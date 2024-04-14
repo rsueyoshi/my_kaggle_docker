@@ -4,11 +4,12 @@ dataset:
     - /kaggle/input/pii-mixtral8x7b-generated-essays/mpware_mixtral8x7b_v1.1-no-i-username.json
     negative_ratio: 0.3
 fold:
-    num_folds: 4
+    num_folds: 0
     fold: 0
-model_class: RobertaLongformerDo5ForTokenClassification
-    backbone: allenai/longformer-large-4096
-    name: EX017
+model_class: DebertaV2Do5ForTokenClassification_6hiddenstates
+architecture:
+    backbone: microsoft/deberta-v3-large
+    name: EX013
     freeze_layers: 6
     freeze_embedding: False
 environment:
@@ -18,13 +19,13 @@ tokenizer:
     max_length: 3072
     stride: 128
 training:
-    batch_size: 2
-    eval_batch_size: 2
+    batch_size: 1
+    eval_batch_size: 1
     epochs: 4
-    grad_accumulation: 8
+    grad_accumulation: 16
     learning_rate: 2.5e-5
     schedule: linear 
-    evaluation_strategy: steps
+    evaluation_strategy: "no"
     eval_steps: 50
     metric_for_best_model: f5
     warmup_ratio: 0.1
