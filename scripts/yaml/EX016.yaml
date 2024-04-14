@@ -19,10 +19,10 @@ tokenizer:
     max_length: 512
     stride: 64
 training:
-    batch_size: 4
+    batch_size: 8
     eval_batch_size: 8
     epochs: 4
-    grad_accumulation: 4
+    grad_accumulation: 2
     learning_rate: 2.5e-5
     schedule: linear 
     evaluation_strategy: steps

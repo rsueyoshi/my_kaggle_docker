@@ -9,7 +9,7 @@ fold:
 model_class: DebertaV2Do5ForTokenClassification_12hiddenstates
 architecture:
     backbone: microsoft/deberta-v3-large
-    name: EX013
+    name: EX022
     freeze_layers: 6
     freeze_embedding: False
 environment:
