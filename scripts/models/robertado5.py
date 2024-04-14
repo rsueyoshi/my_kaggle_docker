@@ -7,12 +7,12 @@ from transformers.models.roberta import RobertaPreTrainedModel, RobertaModel
 from transformers.modeling_outputs import TokenClassifierOutput, TokenClassifierOutput
 
 
-class RobertaModelDo5ForTokenClassification(RobertaPreTrainedModel):
+class RobertaDo5ForTokenClassification(RobertaPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
 
-        self.deberta = RobertaModel(config)
+        self.roberta = RobertaModel(config, add_pooling_layer=False)
         self.dropout22 = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         
@@ -44,7 +44,7 @@ class RobertaModelDo5ForTokenClassification(RobertaPreTrainedModel):
         """
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        outputs = self.deberta(
+        outputs = self.roberta(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,

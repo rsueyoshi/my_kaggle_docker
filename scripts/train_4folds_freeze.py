@@ -609,8 +609,8 @@ elif cfg.model_class == "DebertaV2LstmForTokenClassification":
     )
 
 elif cfg.model_class == "RobertaDo5ForTokenClassification":
-    from models.robertado5 import RobertaModelDo5ForTokenClassification
-    model = RobertaModelDo5ForTokenClassification.from_pretrained(
+    from models.robertado5 import RobertaDo5ForTokenClassification
+    model = RobertaDo5ForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
         id2label=id2label,
@@ -619,8 +619,8 @@ elif cfg.model_class == "RobertaDo5ForTokenClassification":
     )
 
 elif cfg.model_class == "LongformerDo5ForTokenClassification":
-    from models.longformerdo5 import LongformerModelDo5ForTokenClassification
-    model = LongformerModelDo5ForTokenClassification.from_pretrained(
+    from models.longformerdo5 import LongformerDo5ForTokenClassification
+    model = LongformerDo5ForTokenClassification.from_pretrained(
         TRAINING_MODEL_PATH,
         num_labels=len(all_labels),
         id2label=id2label,
@@ -628,11 +628,24 @@ elif cfg.model_class == "LongformerDo5ForTokenClassification":
         ignore_mismatched_sizes=True
     )
 
-for param in model.deberta.embeddings.parameters():
-    param.requires_grad = False if cfg.architecture.freeze_embedding else True
-for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
-    for param in layer.parameters():
-        param.requires_grad = False
+if "Deberta" in cfg.model_class:
+    for param in model.deberta.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.deberta.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
+elif "Roberta" in cfg.model_class:
+    for param in model.roberta.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.roberta.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
+elif "Longformer" in cfg.model_class:
+    for param in model.longformer.embeddings.parameters():
+        param.requires_grad = False if cfg.architecture.freeze_embedding else True
+    for layer in model.longformer.encoder.layer[:cfg.architecture.freeze_layers]:
+        for param in layer.parameters():
+            param.requires_grad = False
 
 collator = Collator(tokenizer)
 
