@@ -139,10 +139,16 @@ class Trainer_Awp(Trainer):
             self.accelerator.backward(loss)
 
         # AWP実行
-        if (
-            self.state.epoch >= self.awp_start \
-            and self.state.log_history[-1]["f5"] >= 0.9
-        ):
-            self.awp(inputs)
+        if self.state.epoch >= self.awp_start:
+            i = -1
+            while i > -5:
+                if "eval_f5" in self.state.log_history[-i]:
+                    if self.state.log_history[-1]["eval_f5"] >= 0.9:
+                        self.awp(inputs)
+                    break
+                else:
+                    i -= 1
+            if i == -5:
+                print("eval_f5 not found.")
 
         return loss.detach() / self.args.gradient_accumulation_steps

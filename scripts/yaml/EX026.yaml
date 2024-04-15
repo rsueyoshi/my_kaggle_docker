@@ -27,6 +27,7 @@ training:
     schedule: linear 
     evaluation_strategy: steps
     eval_steps: 40
+    eval_delay: 280
     metric_for_best_model: f5
     warmup_ratio: 0.1
     weight_decay: 0.01
