@@ -143,7 +143,7 @@ class Trainer_Awp(Trainer):
             i = -1
             while i > -5:
                 if "eval_f5" in self.state.log_history[-i]:
-                    if self.state.log_history[-1]["eval_f5"] >= 0.9:
+                    if self.state.log_history[-1]["eval_f5"] >= 0.92:
                         self.awp(inputs)
                     break
                 else:
