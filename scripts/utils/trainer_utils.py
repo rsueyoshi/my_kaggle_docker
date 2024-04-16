@@ -141,11 +141,11 @@ class Trainer_Awp(Trainer):
         # AWP実行
         if self.state.epoch >= self.awp_start:
             try:
-                if self.state.log_history[-1]["eval_f5"] >= 0.9:
+                if self.state.log_history[-1]["eval_f5"] >= 0.92:
                     self.awp(inputs)
             except:
                 try:
-                    if self.state.log_history[-2]["eval_f5"] >= 0.9:
+                    if self.state.log_history[-2]["eval_f5"] >= 0.92:
                         self.awp(inputs)
                 except:
                     print("AWP is not executed.")
