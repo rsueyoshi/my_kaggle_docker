@@ -8,7 +8,7 @@ fold:
     fold: 0
 model_class: DebertaV2Do5ForTokenClassification
 architecture:
-    backbone: microsoft/deberta-v3-xarge
+    backbone: microsoft/deberta-v3-base
     name: EX101
     freeze_layers: 8
     freeze_embedding: False
@@ -31,8 +31,8 @@ training:
     metric_for_best_model: f5
     warmup_ratio: 0.1
     weight_decay: 0.01
-    bf16: True
-    fp16: False
+    bf16: False
+    fp16: True
     adv_param: 'weight'
-    gradient_checkpointing: true
+    gradient_checkpointing: Flase
 debug: false
