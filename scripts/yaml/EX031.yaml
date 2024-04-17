@@ -16,7 +16,7 @@ environment:
     mixed_precision: true
     seed: 42
 tokenizer:
-    max_length: 3072
+    max_length: 2304
     stride: 128
 training:
     batch_size: 1
@@ -35,7 +35,7 @@ training:
     fp16: False
     adv_param: 'weight'
     adv_lr: 0.01
-    adv_eps: 0.0001
+    adv_eps: 0.001
     awp_start: 1
     gradient_checkpointing: true
 debug: false
