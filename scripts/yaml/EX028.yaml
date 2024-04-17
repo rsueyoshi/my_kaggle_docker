@@ -10,7 +10,7 @@ model_class: DebertaV2Do5ForTokenClassification
 architecture:
     backbone: microsoft/deberta-v3-large
     name: EX028
-    freeze_layers: 8
+    freeze_layers: 6
     freeze_embedding: False
 environment:
     mixed_precision: true

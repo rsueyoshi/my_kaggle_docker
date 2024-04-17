@@ -705,6 +705,7 @@ trainer = Trainer(
     awp_start=cfg.training.awp_start,
 )
 
+print(OUTPUT_DIR)
 trainer.train(resume_from_checkpoint=resume)
 
 
