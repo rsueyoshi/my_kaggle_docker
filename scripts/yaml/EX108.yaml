@@ -1,0 +1,38 @@
+dataset:
+  json_filepath: /kaggle/input/pii-detection-removal-from-educational-data/train.json
+  extra_filepath:
+    - /kaggle/input/pii-extra-data/pii_dataset_fixed.json
+  negative_ratio: 0.3
+fold:
+  num_folds: 4
+  fold: 0
+model_class: DebertaV2Do5ForTokenClassification
+architecture:
+  backbone: microsoft/deberta-v3-base
+  name: EX108
+  freeze_layers: 8
+  freeze_embedding: False
+environment:
+  mixed_precision: true
+  seed: 42
+tokenizer:
+  max_length: 2024
+  stride: 128
+training:
+  batch_size: 1
+  eval_batch_size: 1
+  epochs: 5
+  grad_accumulation: 16
+  learning_rate: 2.5e-5
+  schedule: linear
+  evaluation_strategy: steps
+  eval_steps: 50
+  eval_delay: 300
+  metric_for_best_model: f5
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+  bf16: False
+  fp16: True
+  adv_param: "weight"
+  gradient_checkpointing: Flase
+debug: false
