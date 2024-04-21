@@ -140,16 +140,17 @@ class Trainer_Awp(Trainer):
 
         # AWP実行
         if self.state.epoch >= self.awp_start:
-            try:
-                if self.state.log_history[-1]["eval_f5"] >= 0.85:
-                    self.awp(inputs)
-            except:
-                try:
-                    if self.state.log_history[-2]["eval_f5"] >= 0.85:
-                        self.awp(inputs)
-                except:
-                    print("AWP is not executed.")
-                    print(self.state.log_history[-1].keys())
-                    print(self.state.log_history[-2].keys())
+            self.awp(inputs)
+            # try:
+            #     if self.state.log_history[-1]["eval_f5"] >= 0.85:
+            #         self.awp(inputs)
+            # except:
+            #     try:
+            #         if self.state.log_history[-2]["eval_f5"] >= 0.85:
+            #             self.awp(inputs)
+            #     except:
+            #         print("AWP is not executed.")
+            #         print(self.state.log_history[-1].keys())
+            #         print(self.state.log_history[-2].keys())
 
         return loss.detach() / self.args.gradient_accumulation_steps
